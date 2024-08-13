@@ -1,19 +1,18 @@
 import { useAuth } from "../shared/hooks/useAuth"
+import PostList from "./post/PostList";
 
 export const Portada = () => {
-    const { logout, state } = useAuth();
+    const { state } = useAuth();
 
-    const handleLogout = () => {
-        logout()
-    }
 
     return (
         <section>
             <div>hola</div>
-            <button onClick={handleLogout} >y adiós</button>
 
-            <div>user: {state.user.username}</div>
-            <div>email: {state.user.email}</div>
+            <div>user: {state.loginState.user.username}</div>
+            <div>email: {state.loginState.user.email}</div>
+
+            <PostList />
         </section>
     )
 }

@@ -1,13 +1,19 @@
-import { createContext } from "react";
-import { ILoginState } from "../../auth/Context/Reducer";
+import { createContext, Dispatch } from "react";
+import { ILoginState, } from "../../auth/Context/Reducer";
+import { IPostState } from "../../dashboard/post/context/Reducer"
 import { LoginAction } from "../../auth/Context/Types";
+import { PostAction } from "../../dashboard/post/context/Types";
+
+export type IStates = { loginState: ILoginState; postState: IPostState; }
+export type IActions = LoginAction | PostAction
 
 export interface authProvider {
-    state: ILoginState;
-    dispatch: React.Dispatch<LoginAction>;
+    state: IStates;
+    dispatch: Dispatch<IActions>;
     session: boolean;
     login: (data: any) => Promise<void>;
     logout: () => void;
 }
+
 
 export const AuthContext = createContext({} as authProvider)

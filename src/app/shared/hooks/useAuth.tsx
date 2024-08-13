@@ -1,16 +1,23 @@
-import { useMemo, useContext, useReducer } from "react";
+import { useMemo, useContext, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
-import LoginReducer, { initialState } from "../../auth/Context/Reducer";
 import { updateUserSession } from "../../auth/Context/Action";
 import { AuthContext } from "../Context/context";
 import { User } from "../entities/User";
+import LoginReducer, { initialLoginState } from "../../auth/Context/Reducer";
+import PostReducer, { initialPostState } from "../../dashboard/post/context/Reducer";
 
 export const AuthProvider = ({ children }: { children: any }) => {
     const [session, setSession] = useLocalStorage("user", false);
     const navigate = useNavigate();
 
-    const [state, dispatch] = useReducer(LoginReducer, { ...initialState });
+    const combineDispatch = (...dispatches: any[]) => (action: any) => dispatches.forEach((dispatch) => dispatch(action));
+
+    const [loginState, loginDispatch] = useReducer(LoginReducer, initialLoginState);
+    const [postState, postDispatch] = useReducer(PostReducer, initialPostState);
+
+    const dispatch = useCallback(combineDispatch(loginDispatch, postDispatch), [loginDispatch, postDispatch])
+    const state = useMemo(() => ({ loginState, postState }), [loginState, postState])
 
     // call this function when you want to authenticate the user
     const login = async (data: any) => {
@@ -38,7 +45,7 @@ export const AuthProvider = ({ children }: { children: any }) => {
             login,
             logout
         }),
-        [session, state.user]
+        [session, state.loginState.user]
     );
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

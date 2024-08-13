@@ -1,7 +1,8 @@
+import { IActions } from "../../shared/Context/context"
 import { User } from "../../shared/entities/User"
-import { LoginAction, LoginTypes } from "./Types"
+import { LoginTypes } from "./Types"
 
-export const updateUserSessionData = (data: User): LoginAction => ({
+export const updateUserSessionData = (data: User): IActions => ({
     type: LoginTypes.UserSession,
     data
 })

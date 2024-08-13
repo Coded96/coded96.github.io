@@ -10,7 +10,7 @@ export const PrivateRoute = ({ children }: { children: any }) => {
 
     if (!session)
         return <Navigate to="/login" />;
-    else if (state.user.username == undefined)
+    else if (state.loginState.user.username == undefined)
         updateUserSession(registeredData, dispatch)
 
     return children;

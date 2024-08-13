@@ -10,7 +10,7 @@ export const NavMenu = () => {
                 <Link className="text-gray-400" to={'/'}>Inicio</Link>
             </section>
             <section>
-                <button onClick={logout}>{state.user.username}</button>
+                <button onClick={logout}>{state.loginState.user.username}</button>
             </section>
         </nav>
     )

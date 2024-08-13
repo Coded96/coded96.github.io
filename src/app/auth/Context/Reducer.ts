@@ -5,7 +5,7 @@ export interface ILoginState {
     user: User;
 }
 
-export const initialState: ILoginState = {
+export const initialLoginState: ILoginState = {
     user: new User(),
 };
 
