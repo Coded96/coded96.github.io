@@ -14,7 +14,7 @@ import { AuthProvider } from './app/shared/hooks/useAuth.tsx';
 const Main = () => {
 
   return (
-    <div className='h-screen w-full bg-slate-900'>
+    <div className='min-h-screen w-full bg-slate-900'>
       <NavMenu />
       <Routes>
         <Route path="/login" element={<MenuLogin />} />

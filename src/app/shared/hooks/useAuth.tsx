@@ -2,7 +2,7 @@ import { useMemo, useContext, useReducer, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocalStorage } from "./useLocalStorage";
 import { updateUserSession } from "../../auth/Context/Action";
-import { AuthContext } from "../Context/context";
+import { AuthContext, combineDispatch } from "../Context/context";
 import { User } from "../entities/User";
 import LoginReducer, { initialLoginState } from "../../auth/Context/Reducer";
 import PostReducer, { initialPostState } from "../../dashboard/post/context/Reducer";
@@ -10,8 +10,6 @@ import PostReducer, { initialPostState } from "../../dashboard/post/context/Redu
 export const AuthProvider = ({ children }: { children: any }) => {
     const [session, setSession] = useLocalStorage("user", false);
     const navigate = useNavigate();
-
-    const combineDispatch = (...dispatches: any[]) => (action: any) => dispatches.forEach((dispatch) => dispatch(action));
 
     const [loginState, loginDispatch] = useReducer(LoginReducer, initialLoginState);
     const [postState, postDispatch] = useReducer(PostReducer, initialPostState);
@@ -26,14 +24,14 @@ export const AuthProvider = ({ children }: { children: any }) => {
         let user = new User()
         user.username = username;
         user.password = password;
-        updateUserSession(user, dispatch)
+        dispatch(updateUserSession(user))
         navigate("/");
     };
 
     // call this function to sign out logged in user
     const logout = () => {
         setSession(false);
-        updateUserSession(new User(), dispatch)
+        dispatch(updateUserSession(new User()))
         navigate("/Login", { replace: true });
     };
 
@@ -45,8 +43,16 @@ export const AuthProvider = ({ children }: { children: any }) => {
             login,
             logout
         }),
-        [session, state.loginState.user]
+        [session, state.loginState.user, state.postState.Posts.length]
     );
+
+    // const value = {
+    //     state,
+    //     dispatch,
+    //     session,
+    //     login,
+    //     logout
+    // };
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 

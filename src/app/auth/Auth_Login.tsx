@@ -35,7 +35,7 @@ export const AuthLogin = () => {
         if (usr.username == '' || usr.email == '')
             err.push('No tenemos datos de tu registro. Por favor, registrese primero')
 
-        if (usr.username != username || usr.password != password || usr.email != email)
+        if (usr.password != password || (usr.username != username && usr.email != email))
             err.push("Datos incorrectos")
 
         if (err.length == 0) {

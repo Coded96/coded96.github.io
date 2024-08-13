@@ -15,5 +15,6 @@ export interface authProvider {
     logout: () => void;
 }
 
+export const combineDispatch = (...dispatches: any[]) => (action: any) => dispatches.forEach((dispatch) => dispatch(action));
 
 export const AuthContext = createContext({} as authProvider)

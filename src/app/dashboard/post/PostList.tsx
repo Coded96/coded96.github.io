@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import PostComponent from "./Post"
 import { Post } from "../../shared/entities/Post"
 import { useAuth } from "../../shared/hooks/useAuth"
+import { updatePostsList } from "./context/Action"
 
 const PostList = () => {
-    const { state } = useAuth();
-    const [posts, setPosts] = useState<Post[]>([])
+    const { state, dispatch } = useAuth();
 
     useEffect(() => {
         const createPosts = () => {
@@ -20,15 +20,15 @@ const PostList = () => {
                 p.like = 0
                 ps.push(p)
             }
-            setPosts(ps)
+            dispatch(updatePostsList(ps))
         }
-        createPosts()
-    }, [])
-
+        if (state.loginState.user.username != undefined)
+            createPosts()
+    }, [state.loginState.user, state.postState.Posts])
 
     return (
-        <section>
-            {posts.map((p: Post) => (<PostComponent key={p.id} data={p} />))}
+        <section className="w-1/2 min-h-[75vh] mx-auto py-2 border-b-[1px] border-x-[1px] ">
+            {state.postState.Posts.map((p: Post) => (<PostComponent key={p.id} data={p} />))}
         </section>
     )
 }
