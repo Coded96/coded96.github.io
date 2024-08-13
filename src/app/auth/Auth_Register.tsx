@@ -1,14 +1,16 @@
 import { FormEvent, useState } from "react";
 import { useAuth } from "../shared/hooks/useAuth";
 import { useLocalStorage } from "../shared/hooks/useLocalStorage";
+import { User } from "../shared/entities/User";
 
-export const AuthRegister = ({ handleLoginBtn }: { handleLoginBtn: React.Dispatch<React.SetStateAction<boolean>> }) => {
+export const AuthRegister = () => {
     const { login } = useAuth();
-    const [registeredData, setRegisteredData] = useLocalStorage("usuarios", [])
+    const [registeredData, setRegisteredData] = useLocalStorage("usuarios", new User())
 
     const [username, setUsername] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
+    const [email, setEmail] = useState("")
 
     const [errores, setErrores] = useState<string[]>([])
 
@@ -17,7 +19,7 @@ export const AuthRegister = ({ handleLoginBtn }: { handleLoginBtn: React.Dispatc
         setErrores([])
         let err: string[] = []
 
-        if (username == '' || password == '')
+        if (username == '' || password == '' || email == '')
             err.push("Los campos del formulario no pueden estar vacios")
         if (password !== confirmPassword)
             err.push("Las contraseñas no coinciden")
@@ -25,43 +27,58 @@ export const AuthRegister = ({ handleLoginBtn }: { handleLoginBtn: React.Dispatc
         if (password.length < 8)
             err.push("La contraseña debe tener más de 8 caracteres")
 
-        for (let i = 0; i < registeredData.length; i++) {
-            let user = registeredData[0].split("#")[0]
-            if (user == username)
-                err.push("El usuario ya está en uso")
-        }
+
+        let user = registeredData as User
+        if (user.username == username || user.email == email)
+            err.push("El usuario ya está en uso")
 
         // Here you would usually send a request to your backend to authenticate the user
         // For the sake of this example, we're using a mock authentication
         if (err.length == 0) {
-            registeredData.push(`${username}#${password}`)
-            setRegisteredData(registeredData)
+            user.email = email;
+            user.username = username;
+            user.password = password;
+            setRegisteredData(user)
             // Replace with actual authentication logic
-            await login({ username, password });
+            await login({ username, password, email });
         } else {
             setErrores(err)
         }
     };
 
     return (
-        <section>
-            <form onSubmit={(e) => handleLogin(e)}>
-                <section>
-                    <div onClick={() => handleLoginBtn(true)}>Login</div>
-                    <div>Register</div>
-                </section>
-                <section>
-                    <input placeholder="Login name" onChange={(e) => setUsername(e.target.value)} value={username} className="text-gray-800" />
-                    <input placeholder="Password" onChange={(e) => setPassword(e.target.value)} value={password} className="text-gray-800" type="password" />
-                    <input placeholder="Confirm password" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword} className="text-gray-800" type="password" />
-                </section>
-                <section>
-                    <button type="submit" className="text-gray-900">Register</button>
-                </section>
-                <section className="flex flex-col">
-                    {errores.map(m => (<span key={m}>{m}</span>))}
-                </section>
-            </form>
-        </section>
+        <form onSubmit={(e) => handleLogin(e)} className="flex flex-col basis-1/2">
+            <section className="flex flex-col w-1/2 mx-auto my-2 gap-2">
+                <input
+                    className="text-gray-800 px-4 py-1 outline-none font-semibold border-2 bg-slate-300"
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
+                    value={email}
+                    type="email" />
+                <input
+                    className="text-gray-800 px-4 py-1 outline-none font-semibold border-2 bg-slate-300"
+                    placeholder="Login name"
+                    onChange={(e) => setUsername(e.target.value)}
+                    value={username} />
+                <input
+                    className="text-gray-800 px-4 py-1 outline-none font-semibold border-2 bg-slate-300"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    type="password" />
+                <input
+                    className="text-gray-800 px-4 py-1 outline-none font-semibold border-2 bg-slate-300"
+                    placeholder="Confirm password"
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={confirmPassword}
+                    type="password" />
+            </section>
+            <section className="mx-auto my-2">
+                <button type="submit" className="text-gray-900 font-medium bg-cyan-400 px-3 py-2 hover:bg-gradient-to-b hover:from-cyan-400 hover:to-cyan-600">Register</button>
+            </section>
+            <section className="flex flex-col mx-auto my-5 text-red-600  w-1/2 ">
+                {errores.map(m => (<span key={m}>{m}</span>))}
+            </section>
+        </form>
     )
 }

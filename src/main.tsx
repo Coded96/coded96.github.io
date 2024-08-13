@@ -11,26 +11,22 @@ import { AuthProvider } from './app/shared/hooks/useAuth.tsx';
 
 
 // eslint-disable-next-line react-refresh/only-export-components
-const MainCompo = () => {
+const Main = () => {
 
   return (
-    <div className='dark'>
-      <div className='bg-neutral-900 text-white'>
-        <AuthProvider>
-          <NavMenu />
-          <Routes>
-            <Route path="/login" element={<MenuLogin />} />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <Portada />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </AuthProvider>
-      </div>
+    <div className='h-screen w-full bg-slate-900'>
+      <NavMenu />
+      <Routes>
+        <Route path="/login" element={<MenuLogin />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Portada />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </div>
   )
 }
@@ -38,7 +34,9 @@ const MainCompo = () => {
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <MainCompo />
+      <AuthProvider>
+        <Main />
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>,
 )
